@@ -1,0 +1,30 @@
+div{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.card{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 10px;
+}
+.card.Common{
+    background-color: gray;
+    color: white;
+}
+.card.Uncommon{
+    background-color: lightgreen;
+}
+.card.Rare{
+    background-color: lightskyblue;
+}
+.card.Epic{
+    background-color: mediumorchid;
+    color: white;
+}
+.card.Legendary{
+    background-color: gold;
+}
+img{
+    height: 200px;
+}

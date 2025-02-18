@@ -1,0 +1,7 @@
+div
+    - @result.each do |info|
+        section class="card #{info["rarity"]}"
+            p #{info["name"]}
+            p #{info["year"]}
+            p #{info["rarity"]}
+            img src="#{info["poster"]}"
