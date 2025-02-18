@@ -23,11 +23,11 @@ post('/register') do
     username = params["username"]
     password = params["password"] 
     password_confirmation = params["confirm_password"]
-    result = db.execute("SELECT id FROM users WHERE username=?", @username)
+    result = db.execute("SELECT id FROM users WHERE username=?", username)
     if result.empty?
         if password == password_confirmation
             password_digest = BCrypt::Password.create(password)
-            db.execute("INSERT INTO users(username, password) VALUES (?, ?)" [username, password_digest])
+            db.execute("INSERT INTO users(username, password) VALUES (?, ?)", [username, password_digest])
             redirect('/library')
         else
             set_error("Passwords do not match")
