@@ -4,17 +4,39 @@ require 'sqlite3'
 require 'sinatra/reloader'
 require 'bcrypt'
 
+enable :sessions
+
 get('/profile/:user') do
     db = SQLite3::Database.new("db/database.db")
     db.results_as_hash = true
-    # if logged_in = true
-    #     slim(:profile)
-    # else
-    #     slim(:login)
+
+    slim(:profile)
+end
+
+get ('/login') do
+    slim(:login)
+end
+
+post ('/login') do
+    db = SQLite3::Database.new("db/database.db")
+    db.results_as_hash = true
+    username = params["username"]
+    password = params["password"]
+    result = db.execute("SELECT * FROM users WHERE username = ?", username)
+    password_digest = result.first['password']
+    id = result.first['id']
+    if BCrypt::Password.new(password_digest) == password
+        session[:id] = id
+        # flash[:alert] = "Successfully logged in as "
+        redirect('/profile')
+    else
+        set_error("Wrong password")
+        redirect('/error')
+    end
 end
 
 get('/register') do
-    slim(:login)
+    slim(:register)
 end
 
 post('/register') do
@@ -40,7 +62,7 @@ post('/register') do
 end
 
 get('/error') do
-    # set_error
+    #????????????
 end
 
 get('/library') do
