@@ -79,6 +79,14 @@ post('/crud/new') do
 end
 
 post('/crud/edit') do
+    name = params[:name]
+    id = params[:id]
+    year = params[:year]
+    rarity = params[:rarity]
+    poster = params[:poster]
+    db = SQLite3::Database.new("db/database.db")
+    @result = db.execute("UPDATE films SET name=?, year=?, rarity=?, poster=? WHERE id=?", [name, year, rarity, poster, id])
+    redirect("/library")
 end
 
 post('/crud/delete') do
