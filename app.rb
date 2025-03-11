@@ -25,11 +25,10 @@ post ('/login') do
     password_digest = result.first['password']
     id = result.first['id']
     if BCrypt::Password.new(password_digest) == password
-        session[:id] = id
+        session[:username] = username
         redirect('/profile')
     else
-        set_error("Wrong password")
-        redirect('/error')
+        "Wrong password"
     end
 end
 
@@ -50,17 +49,11 @@ post('/register') do
             db.execute("INSERT INTO users(username, password) VALUES (?, ?)", [username, password_digest])
             redirect('/library')
         else
-            set_error("Passwords do not match")
-            redirect('/error')
+            "Passwords do not match"
         end
     else
-        set_error("Username already exists")
-        redirect('/error')
+        "Username already exists"
     end
-end
-
-get('/error') do
-    #????????????
 end
 
 get('/library') do
@@ -68,4 +61,25 @@ get('/library') do
     db.results_as_hash = true
     @result = db.execute("SELECT * FROM films")
     slim(:library)
+end
+
+get('/crud') do
+    slim(:crud)
+end
+
+post('/crud/new') do
+    name = params[:name]
+    id = params[:id]
+    year = params[:year]
+    rarity = params[:rarity]
+    poster = params[:poster]
+    db = SQLite3::Database.new("db/database.db")
+    @result = db.execute("INSERT INTO films (name, id, year, rarity, poster) VALUES (?, ?, ?, ?, ?)", [name, id, year, rarity, poster])
+    redirect("/library")
+end
+
+post('/crud/edit') do
+end
+
+post('/crud/delete') do
 end
