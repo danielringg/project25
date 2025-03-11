@@ -6,10 +6,9 @@ require 'bcrypt'
 
 enable :sessions
 
-get('/profile/:user') do
+get('/profile') do
     db = SQLite3::Database.new("db/database.db")
     db.results_as_hash = true
-
     slim(:profile)
 end
 
@@ -27,7 +26,6 @@ post ('/login') do
     id = result.first['id']
     if BCrypt::Password.new(password_digest) == password
         session[:id] = id
-        # flash[:alert] = "Successfully logged in as "
         redirect('/profile')
     else
         set_error("Wrong password")
