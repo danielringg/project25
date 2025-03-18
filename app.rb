@@ -63,6 +63,10 @@ get('/library') do
     slim(:library)
 end
 
+get('/store') do
+    slim(:store)
+end
+
 get('/crud') do
     slim(:crud)
 end
@@ -90,4 +94,8 @@ post('/crud/edit') do
 end
 
 post('/crud/delete') do
+    id = params[:id]
+    db = SQLite3::Database.new("db/database.db")
+    @result = db.execute("DELETE FROM films WHERE id=?", [id])
+    redirect("/library")
 end
