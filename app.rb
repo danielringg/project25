@@ -67,6 +67,12 @@ get('/store') do
     slim(:store)
 end
 
+post('/store/open') do
+    db = SQLite3::Database.new("db/database.db")
+    db.results_as_hash = true
+    @result = db.execute("SELECT ")
+end
+
 get('/crud') do
     slim(:crud)
 end
