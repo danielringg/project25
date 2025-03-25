@@ -26,6 +26,7 @@ post ('/login') do
     id = result.first['id']
     if BCrypt::Password.new(password_digest) == password
         session[:username] = username
+        session[:user_id] = user['id']
         redirect('/profile')
     else
         "Wrong password"
@@ -70,7 +71,15 @@ end
 post('/store/open') do
     db = SQLite3::Database.new("db/database.db")
     db.results_as_hash = true
-    @result = db.execute("SELECT ")
+
+    user_id = session[:user_id]
+
+    cards = db.execute("SELECT * FROM films ORDER BY RANDOM() LIMIT 3")
+    cards.each do |card|
+        db.execute("INSERT INTO user_card_join (user_id, film_id) VALUES (?, ?)", [user_id, cards['id']])
+    end
+    @cards = cards
+    slim(:pack_opened) #? på nåt sätt ska jag displaya korten som man får
 end
 
 get('/crud') do
