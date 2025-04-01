@@ -6,9 +6,16 @@ require 'bcrypt'
 
 enable :sessions
 
+before '/protected/*' do
+    if session[:user_id] == nil
+        redirect to ('/login')
+    end
+end
+
 get('/profile') do
     db = SQLite3::Database.new("db/database.db")
     db.results_as_hash = true
+    result = db.execute('SELECT * FROM user_card_join WHERE user_id = ?', [session[:user_id]])
     slim(:profile)
 end
 
@@ -16,22 +23,26 @@ get ('/login') do
     slim(:login)
 end
 
-post ('/login') do
+post('/login') do
     db = SQLite3::Database.new("db/database.db")
     db.results_as_hash = true
     username = params["username"]
     password = params["password"]
-    result = db.execute("SELECT * FROM users WHERE username = ?", username)
-    password_digest = result.first['password']
-    id = result.first['id']
-    if BCrypt::Password.new(password_digest) == password
-        session[:username] = username
-        session[:user_id] = user['id']
-        redirect('/profile')
+    @result = db.execute("SELECT * FROM users WHERE username = ?", [username])
+    if result.any?
+        password_digest = result.first['password']
+        if BCrypt::Password.new(password_digest) == password
+            session[:username] = username
+            session[:user_id] = result.first['id']
+            redirect('/profile')
+        else
+            return "Wrong password"
+        end
     else
-        "Wrong password"
+        return "User not found"
     end
 end
+
 
 get('/register') do
     slim(:register)
@@ -64,7 +75,7 @@ get('/library') do
     slim(:library)
 end
 
-get('/store') do
+get('/protected/store') do
     slim(:store)
 end
 
@@ -76,13 +87,14 @@ post('/store/open') do
 
     cards = db.execute("SELECT * FROM films ORDER BY RANDOM() LIMIT 3")
     cards.each do |card|
-        db.execute("INSERT INTO user_card_join (user_id, film_id) VALUES (?, ?)", [user_id, cards['id']])
+        db.execute("INSERT INTO user_card_join (user_id, film_id) VALUES (?, ?)", [user_id, card['id']])
     end
     @cards = cards
-    slim(:pack_opened) #? på nåt sätt ska jag displaya korten som man får
+    slim(:pack_opened)
 end
 
-get('/crud') do
+get('/protected/crud') do
+    # bara admin kanske?
     slim(:crud)
 end
 

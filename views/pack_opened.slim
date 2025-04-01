@@ -1,3 +1,7 @@
 ul
     - @cards.each do |card|
-    li Card ID: = card['card_id']
+        section class="card #{card['rarity']}"
+            p #{card['name']}
+            p #{card['year']}
+            p #{card['rarity']}
+            img src="#{card['poster']}"
