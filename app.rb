@@ -12,10 +12,21 @@ before '/protected/*' do
     end
 end
 
-get('/profile') do
+before '/adminprotected/*' do
+    if session[:user_id] != 3
+        redirect to ('/login')
+    end
+end
+
+get('/protected/profile') do
     db = SQLite3::Database.new("db/database.db")
     db.results_as_hash = true
-    result = db.execute('SELECT * FROM user_card_join WHERE user_id = ?', [session[:user_id]])
+    owned_films = db.execute('SELECT film_id FROM user_card_join WHERE user_id = ?', session[:user_id])  
+    @result = []
+    owned_films.each do |film|
+        film_details = db.execute('SELECT * FROM films WHERE id = ?', film["film_id"]).first
+        @result.push(film_details)
+    end
     slim(:profile)
 end
 
@@ -29,12 +40,12 @@ post('/login') do
     username = params["username"]
     password = params["password"]
     @result = db.execute("SELECT * FROM users WHERE username = ?", [username])
-    if result.any?
-        password_digest = result.first['password']
+    if @result.any?
+        password_digest = @result.first['password']
         if BCrypt::Password.new(password_digest) == password
             session[:username] = username
-            session[:user_id] = result.first['id']
-            redirect('/profile')
+            session[:user_id] = @result.first['id']
+            redirect('/protected/profile')
         else
             return "Wrong password"
         end
@@ -93,7 +104,7 @@ post('/store/open') do
     slim(:pack_opened)
 end
 
-get('/protected/crud') do
+get('/adminprotected/crud') do
     # bara admin kanske?
     slim(:crud)
 end

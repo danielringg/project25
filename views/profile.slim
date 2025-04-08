@@ -1,13 +1,11 @@
-/ profile pic
-/ username 
-/ deck
-p Logged in as #{session[:username]}
-p Logged in as #{session[:user_id]}
+h2 Logged in as #{session[:username]}
+p User-ID: #{session[:user_id]}
 
-p Your Cards:
+h2 Your cards:
+div
     - @result.each do |card|
-        section class="card #{card['rarity']}"
-                p #{card['name']}
-                p #{card['year']}
-                p #{card['rarity']}
-                img src="#{card['poster']}"
+       section class="card #{card["rarity"]}"
+            p #{card["name"]}
+            p #{card["year"]}
+            p #{card["rarity"]}
+            img src="#{card["poster"]}"
