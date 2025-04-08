@@ -35,10 +35,10 @@ post('/discard') do
     db.results_as_hash = true
     film_id = params["card_id"]
     user_id = session[:user_id]
-    result = db.execute('SELECT card_id FROM user_card_join WHERE film_id = ?', film_id)
+    result = db.execute('SELECT card_id FROM user_card_join WHERE film_id = ? and user_id = ?', [film_id, user_id])
     if result.any?
         card_id = result.first["card_id"]
-        db.execute('DELETE FROM user_card_join WHERE card_id = ? and user_id = ?', [card_id, user_id])
+        db.execute('DELETE FROM user_card_join WHERE card_id = ?', card_id)
         redirect('/protected/profile')
     end
     redirect('/protected/profile')
@@ -84,7 +84,7 @@ post('/register') do
         if password == password_confirmation
             password_digest = BCrypt::Password.create(password)
             db.execute("INSERT INTO users(username, password) VALUES (?, ?)", [username, password_digest])
-            redirect('/library')
+            redirect('/films')
         else
             "Passwords do not match"
         end
@@ -93,11 +93,11 @@ post('/register') do
     end
 end
 
-get('/library') do
+get('/films') do
     db = SQLite3::Database.new("db/database.db")
     db.results_as_hash = true
     @result = db.execute("SELECT * FROM films")
-    slim(:library)
+    slim(:"films/index")
 end
 
 get('/protected/store') do
@@ -131,7 +131,7 @@ post('/crud/new') do
     poster = params[:poster]
     db = SQLite3::Database.new("db/database.db")
     @result = db.execute("INSERT INTO films (name, id, year, rarity, poster) VALUES (?, ?, ?, ?, ?)", [name, id, year, rarity, poster])
-    redirect("/library")
+    redirect("/films")
 end
 
 post('/crud/edit') do
@@ -142,17 +142,19 @@ post('/crud/edit') do
     poster = params[:poster]
     db = SQLite3::Database.new("db/database.db")
     @result = db.execute("UPDATE films SET name=?, year=?, rarity=?, poster=? WHERE id=?", [name, year, rarity, poster, id])
-    redirect("/library")
+    redirect("/films")
 end
 
 post('/crud/delete') do
     id = params[:id]
     db = SQLite3::Database.new("db/database.db")
     @result = db.execute("DELETE FROM films WHERE id=?", [id])
-    redirect("/library")
+    redirect("/films")
 end
 
 get('/protected/trade') do
     db = SQLite3::Database.new("db/database.db") 
+    @result = db.execute"SELECT username FROM users"
+    p @result
     slim(:trade)
 end
