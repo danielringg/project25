@@ -9,3 +9,6 @@ div
             p #{card["year"]}
             p #{card["rarity"]}
             img src="#{card["poster"]}"
+            form action="/discard" method="post"
+                input type="hidden" name="card_id" value="#{card["id"]}"
+                input class="button" type="submit" value="Discard"

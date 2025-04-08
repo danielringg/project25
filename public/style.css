@@ -1,5 +1,5 @@
 body{
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: Tahoma;
     background-color: snow;
 }
 div{
@@ -7,13 +7,25 @@ div{
     flex-wrap: wrap;
     justify-content: space-between;
 }
+header{
+    display: flex;
+    justify-content: space-between;
+}
+.button{
+    color: white;
+    background-color: red;
+    border-radius: 5px;
+}
 .card{
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 10px;
+    margin: 10px;
+    width: 200px;
+    text-align: center;
+    border-radius: 10px;
+    border: 3px solid black;
 }
 .card.Common{
     background-color: gray;
-    color: white;
 }
 .card.Uncommon{
     background-color: lightgreen;
@@ -23,11 +35,12 @@ div{
 }
 .card.Epic{
     background-color: mediumorchid;
-    color: white;
 }
 .card.Legendary{
     background-color: gold;
 }
 img{
     height: 200px;
+    border-radius: 2px;
+    border: 2px solid black;
 }

@@ -30,6 +30,20 @@ get('/protected/profile') do
     slim(:profile)
 end
 
+post('/discard') do
+    db = SQLite3::Database.new("db/database.db")
+    db.results_as_hash = true
+    film_id = params["card_id"]
+    user_id = session[:user_id]
+    result = db.execute('SELECT card_id FROM user_card_join WHERE film_id = ?', film_id)
+    if result.any?
+        card_id = result.first["card_id"]
+        db.execute('DELETE FROM user_card_join WHERE card_id = ? and user_id = ?', [card_id, user_id])
+        redirect('/protected/profile')
+    end
+    redirect('/protected/profile')
+end
+
 get ('/login') do
     slim(:login)
 end
@@ -136,4 +150,9 @@ post('/crud/delete') do
     db = SQLite3::Database.new("db/database.db")
     @result = db.execute("DELETE FROM films WHERE id=?", [id])
     redirect("/library")
+end
+
+get('/protected/trade') do
+    db = SQLite3::Database.new("db/database.db") 
+    slim(:trade)
 end
