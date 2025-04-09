@@ -152,6 +152,13 @@ post('/crud/delete') do
     redirect("/films")
 end
 
+post('/crud/delete_user') do
+    username = params[:username]
+    db = SQLite3::Database.new("db/database.db")
+    @result = db.execute("DELETE FROM users WHERE username=?", [username])
+    redirect("/films")
+end
+
 get('/protected/trade') do
     db = SQLite3::Database.new("db/database.db") 
     @result = db.execute"SELECT username FROM users"
