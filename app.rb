@@ -101,7 +101,7 @@ get('/films') do
 end
 
 get('/protected/store') do
-    slim(:store)
+    slim(:"store/packs")
 end
 
 post('/store/open') do
@@ -115,7 +115,7 @@ post('/store/open') do
         db.execute("INSERT INTO user_card_join (user_id, film_id) VALUES (?, ?)", [user_id, card['id']])
     end
     @cards = cards
-    slim(:pack_opened)
+    slim(:"store/pack_opened")
 end
 
 get('/adminprotected/crud') do
